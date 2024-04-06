@@ -1,23 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import NoPage from "./pages/NoPage";
+
+import { PrivateRoute } from './routes/PrivateRoute';
+
+import CounterMyAdmin from "./pages/CounterMyAdmin";
+import EmployeeDashboard from "./pages/EmployeeDashboard";
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Router>
+        <Routes>
+          {/* Home Page and Index */}
+          <Route index elemet={<LoginPage />}/>
+          <Route path="/home" element={<LoginPage/>}/>
+          <Route path="/admin" element={<CounterMyAdmin />} />
+          <Route path="/dashboard" element={
+          <PrivateRoute>
+            <EmployeeDashboard />
+          </PrivateRoute>
+        } />
+          {/* API */}
+          {/* Other Pages */}
+          <Route path="/register" element={<RegisterPage />}/>
+          {/* 404 */}
+          <Route path="*" element={<NoPage />}/>
+        </Routes>
+      </Router>
     </div>
   );
 }
