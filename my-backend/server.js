@@ -21,25 +21,25 @@ const db = mysql.createPool({
 //LOGIN-SESSION
 
 app.post('/api/login', (req, res) => {
-  const { username, password } = req.body;
-  const sqlQuery = "SELECT * FROM users WHERE username = ?";
-  db.query(sqlQuery, [username], async (err, result) => {
-    if (err) {
-      res.status(500).send('Błąd serwera');
-    } else if (result.length === 0) {
-      res.status(401).send('Nieprawidłowa nazwa użytkownika lub hasło');
-    } else {
-      const user = result[0];
-      const validPassword = await bcrypt.compare(password, user.password_hash);
-      if (!validPassword) {
+    const { username, password } = req.body;
+    const sqlQuery = "SELECT * FROM users WHERE username = ?";
+    db.query(sqlQuery, [username], async (err, result) => {
+      if (err) {
+        res.status(500).send('Błąd serwera');
+      } else if (result.length === 0) {
         res.status(401).send('Nieprawidłowa nazwa użytkownika lub hasło');
       } else {
-        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token });
+        const user = result[0];
+        const validPassword = await bcrypt.compare(password, user.password_hash);
+        if (!validPassword) {
+          res.status(401).send('Nieprawidłowa nazwa użytkownika lub hasło');
+        } else {
+          const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+          res.json({ token });
+        }
       }
-    }
+    });
   });
-});
 
 //WORK-SESSION
 
